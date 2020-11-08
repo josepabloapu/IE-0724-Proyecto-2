@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  webapp:
+    build:
+      context: ./webapp
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./webapp:/webapp
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    environment:
+      - DEBUG=1
