@@ -29,6 +29,12 @@
       <li class="nav-item {% if request.path == '/assets/list' %} active {% endif %}">
         <a class="nav-link" href="{% url 'asset_list' %}">Propiedades</a>
       </li>
+      <li class="nav-item {% if request.path == '/assets/new' %} active {% endif %}">
+        <a class="nav-link" href="{% url 'asset_new' %}">Agregar propiedad</a>
+      </li>
     </ul>
   </div>
+
+  <span class="hello-msg">{{request.user}}</span>
+  <span><a class="hello-msg" href="{% url 'logout' %}">Cerrar sesión</a></span>
 </nav>

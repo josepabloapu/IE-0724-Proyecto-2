@@ -1,0 +1,10 @@
+{% extends 'layout.html' %} {% block content %} {% load widget_tweaks %}
+<div class="container">
+  <form action="{% url 'asset_new' %}" method="POST">
+    {% csrf_token %} {% for field in assetform %}
+    <div class="form-group">{{field.label_tag}} {% render_field field class="form-control" %}</div>
+    {% endfor %}
+    <input class="btn btn-primary" type="submit" value="Registrar nueva propiedad" />
+  </form>
+</div>
+{% endblock %}
