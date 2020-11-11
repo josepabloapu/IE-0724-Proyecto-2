@@ -1,7 +1,10 @@
 {% extends 'layout.html' %} {% block content %}
 
 <div class="container">
-  <h1>Detalles de propiedad</h1>
+  <h1>
+    Detalles de propiedad
+    <a class="btn btn-primary" href="{% url 'asset_edit' asset.pk %}">Editar</a>
+  </h1>
   <a><b>Identificador: </b> {{asset.pk}} </a><br />
   <a><b>Alias: </b> {{asset.alias}} </a><br />
   <a><b>Provincia: </b> {{asset.province}} </a><br />

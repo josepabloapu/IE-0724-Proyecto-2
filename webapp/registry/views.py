@@ -83,6 +83,48 @@ def assets_read(request, pk=None):
         context = {}
         return render(request, 'assets_read.html', context)
 
+@login_required(login_url='login')
+def assets_edit(request, pk=None):
+    print("Checkpoint 1")
+    if pk is not None:
+        try:
+            print("Checkpoint 2")
+            asset = Asset.objects.get(pk=pk)
+        except Asset.DoesNotExist:
+            raise Http404(f'Asset with pk {pk} doesn\'t exist!')
+        if (asset.owner == request.user or request.user.is_superuser):
+            print("Checkpoint 3")
+            new_form = AssetForm(initial={'alias': asset.alias, 
+                                          'province': asset.province,
+                                          'category': asset.category, 
+                                          'owner': asset.owner, 
+                                          'latitude': asset.latitude, 
+                                          'longitude': asset.longitude})
+            if not request.user.is_superuser:
+                new_form.fields['owner'].widget.attrs['disabled'] = True
+            if request.method == "POST":
+                filled_form = AssetForm(request.POST, instance=asset)
+                if not request.user.is_superuser:
+                    filled_form.data._mutable = True
+                    filled_form.data['owner'] = request.user
+                    filled_form.data._mutable = False
+                print("Checkpoint 4")
+                new_asset = filled_form.save()
+                new_pk = new_asset.pk
+                note = f"Asset object with pk: {new_pk} was successfully created."
+                return redirect('asset_list')
+            else:
+                note = "Please proceed to add a new asset."
+
+            context = {"note": note, "assetform": new_form, 'asset': asset}
+            return render(request, "assets_edit.html", context)
+
+        else:
+            raise Http404(f'User cannot view asset with pk {pk}!')
+    else:
+        context = {}
+        return render(request, 'assets_read.html', context)
+
 
 @login_required(login_url='login')
 def assets_delete(request, pk=None):
