@@ -1,0 +1,19 @@
+{% load widget_tweaks %}
+
+  <div class="container">
+    <h1>Crear nueva propiedad</h1>
+    <li>
+        <a href="{% url 'home' %}">Ir a la pagina principal</a>
+    </li>
+    <h2>{{ note }}<h2>
+    <form action="{% url 'new' %}" method="post">
+      {% csrf_token %}
+      {% for field in AssetForm %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {% render_field field class="form-control" %}
+      </div>
+      {% endfor %}
+      <input type="submit" value="Nueva propiedad">
+    </form>
+  </div>

@@ -29,6 +29,9 @@
       <li class="nav-item {% if request.path == '/assets/list' %} active {% endif %}">
         <a class="nav-link" href="{% url 'asset_list' %}">Propiedades</a>
       </li>
+      <li class="nav-item {% if request.path == '/' %} active {% endif %}">
+        <a class="nav-link" href="{% url 'new' %}">Propiedades</a>
+      </li>
     </ul>
   </div>
 </nav>

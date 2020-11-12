@@ -11,6 +11,10 @@ ASSET_CATEGORIES = [
 
 
 class Asset(models.Model):
+
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    fecha_guardar = models.DateTimeField(auto_now=True)
+    
     alias = models.CharField(max_length=20)
     province = models.CharField(max_length=20)
     category = models.CharField(max_length=1, choices=ASSET_CATEGORIES)

@@ -1,6 +1,35 @@
-{% extends 'layout.html' %} {% block content %}
+{% extends 'layout.html' %}{% block content %}
 
 <h1>Bienvenidos</h1>
 <h2>Registre aqui su propiedad</h2>
+
+<body>
+  <header>
+    <nav>
+          <url>
+                {% if user.is_authenticated %}
+                <li>
+                    <a href="#">Usuario: "·{{user.username}}</a>
+                </li>
+                <li>
+                    <a href="{% url 'logout' %}">Cerrar sesiòn</a>
+                </li>
+                {% else %}
+                <li>
+                    <a href="{% url 'login' %}">Ingresar a sesiòn</a>
+                </li>
+                <li>
+                    <a href="{% url 'registro_usuario' %}">Registrar</a>
+                </li>
+                {% endif %}
+
+          </url>
+  </header>
+</body>
+
+
+
+
+
 
 {% endblock %}
