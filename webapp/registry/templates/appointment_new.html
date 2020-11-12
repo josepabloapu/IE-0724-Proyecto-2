@@ -1,10 +1,10 @@
 {% extends 'layout.html' %} {% block content %} {% load widget_tweaks %}
 <div class="container">
-  <form action="{% url 'asset_edit' asset.pk %}" method="POST">
-    {% csrf_token %} {% for field in assetform %}
+  <form action="{% url 'appointment_new' %}" method="POST">
+    {% csrf_token %} {% for field in appointmentform %}
     <div class="form-group">{{field.label_tag}} {% render_field field class="form-control" %}</div>
     {% endfor %}
-    <input class="btn btn-primary" type="submit" value="Actualizar propiedad" />
+    <input class="btn btn-primary" type="submit" value="Add" />
   </form>
 </div>
 {% endblock %}

@@ -1,31 +1,37 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django import forms
-from .models import Asset
+from .models import Appointment
 
+class DateTimeInput(forms.DateTimeInput):
+    input_type = 'datetime-local'
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ["username", "password1", "password2"]
+        fields = ["username", "first_name", "last_name", "email", "password1", "password2"]
 
 
-class AssetForm(forms.ModelForm):
+class AppointmentForm(forms.ModelForm):
     class Meta:
-        model = Asset
+        model = Appointment
         fields = [
-            'alias',
+            'datetime',
+            'provider',
+            'client',
             'province',
-            'category',
             'latitude',
             'longitude',
-            'owner',
+            
         ]
         labels = {
-            'alias': 'Alias',
+            'datetime': 'Datetime',
+            'provider': 'Provider',
+            'client': 'Client',
             'province': 'Province',
-            'category': 'Category',
             'latitude': 'Latitude',
             'longitude': 'Longitude',
-            'owner': 'Owner',
+        }
+        widgets = {
+            'datetime': DateTimeInput(),
         }

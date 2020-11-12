@@ -3,8 +3,9 @@ from django.http import HttpResponse, Http404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Asset
-from .forms import AssetForm, CustomUserCreationForm
+import datetime
+from .models import Appointment
+from .forms import AppointmentForm, CustomUserCreationForm
 # Create your views here.
 
 
@@ -53,105 +54,136 @@ def home(request):
 
 
 @login_required(login_url='login')
-def assets_list(request):
-    asset_dict = {}
-    for item in Asset.objects.all():
-        if (item.owner == request.user or request.user.is_superuser):
-            asset_dict[item.pk] = {
-                'pk': item.pk,
-                'alias': item.alias,
-                'province': item.province,
-                'category': item.category,
-                'latitude': item.latitude,
-                'longitude': item.longitude,
-                'owner': item.owner,
-            }
-    context = {'asset_dict': asset_dict, }
-    return render(request, 'assets_list.html', context)
+def appointment_list(request):
+    appointment_dict = {}
+    now = datetime.datetime.now()
+    for item in Appointment.objects.all():
+        if abs(now.year-item.datetime.year) <= 1:
+            if (item.client == request.user or request.user.is_superuser):
+                appointment_dict[item.pk] = {
+                    'pk': item.pk,
+                    'datetime': item.datetime,
+                    'provider': item.provider,
+                    'client': item.client,
+                    'province': item.province,
+                    'latitude': item.latitude,
+                    'longitude': item.longitude,
+                }
+    context = {'appointment_dict': appointment_dict, }
+    return render(request, 'appointment_list.html', context)
 
 
 @login_required(login_url='login')
-def assets_read(request, pk=None):
+def appointment_read(request, pk=None):
     if pk is not None:
         try:
-            asset = Asset.objects.get(pk=pk)
-        except Asset.DoesNotExist:
-            raise Http404(f'Asset with pk {pk} doesn\'t exist!')
-        context = {'asset': asset}
-        return render(request, 'assets_read.html', context)
+            appointment = Appointment.objects.get(pk=pk)
+        except Appointment.DoesNotExist:
+            raise Http404(f'Appointment with pk {pk} doesn\'t exist!')
+        context = {'appointment': appointment}
+        return render(request, 'appointment_read.html', context)
     else:
         context = {}
-        return render(request, 'assets_read.html', context)
+        return render(request, 'appointment_read.html', context)
 
 @login_required(login_url='login')
-def assets_edit(request, pk=None):
-    print("Checkpoint 1")
+def appointment_edit(request, pk=None):
     if pk is not None:
         try:
-            print("Checkpoint 2")
-            asset = Asset.objects.get(pk=pk)
-        except Asset.DoesNotExist:
-            raise Http404(f'Asset with pk {pk} doesn\'t exist!')
-        if (asset.owner == request.user or request.user.is_superuser):
-            print("Checkpoint 3")
-            new_form = AssetForm(initial={'alias': asset.alias, 
-                                          'province': asset.province,
-                                          'category': asset.category, 
-                                          'owner': asset.owner, 
-                                          'latitude': asset.latitude, 
-                                          'longitude': asset.longitude})
+            appointment = Appointment.objects.get(pk=pk)
+        except Appointment.DoesNotExist:
+            raise Http404(f'Appointment with pk {pk} doesn\'t exist!')
+        if (appointment.client == request.user or request.user.is_superuser):
+    
+            edit_form = AppointmentForm(initial={'datetime': appointment.datetime.strftime('%Y-%m-%dT%H:%M'), 
+                                                'provider': appointment.provider, 
+                                                'client': appointment.client, 
+                                                'province': appointment.province,
+                                                'latitude': appointment.latitude, 
+                                                'longitude': appointment.longitude})
             if not request.user.is_superuser:
-                new_form.fields['owner'].widget.attrs['disabled'] = True
+                edit_form.fields['client'].widget.attrs['disabled'] = True
             if request.method == "POST":
-                filled_form = AssetForm(request.POST, instance=asset)
+                filled_form = AppointmentForm(request.POST, instance=appointment)
                 if not request.user.is_superuser:
                     filled_form.data._mutable = True
-                    filled_form.data['owner'] = request.user
+                    filled_form.data['client'] = request.user
                     filled_form.data._mutable = False
-                print("Checkpoint 4")
-                new_asset = filled_form.save()
-                new_pk = new_asset.pk
-                note = f"Asset object with pk: {new_pk} was successfully created."
-                return redirect('asset_list')
+                new_appointment = filled_form.save()
+                new_pk = new_appointment.pk
+                note = f"Appointment object with pk: {new_pk} was successfully created."
+                return redirect('appointment_list')
             else:
-                note = "Please proceed to add a new asset."
+                note = "Please proceed to add a new appointment."
 
-            context = {"note": note, "assetform": new_form, 'asset': asset}
-            return render(request, "assets_edit.html", context)
+            context = {"note": note, "appointmentform": edit_form, 'appointment': appointment}
+            return render(request, "appointment_edit.html", context)
 
         else:
-            raise Http404(f'User cannot view asset with pk {pk}!')
+            raise Http404(f'User cannot view appointment with pk {pk}!')
     else:
         context = {}
-        return render(request, 'assets_read.html', context)
+        return render(request, 'appointment_read.html', context)
 
 
 @login_required(login_url='login')
-def assets_delete(request, pk=None):
+def appointment_delete(request, pk=None):
     try:
-        asset = Asset.objects.get(pk=pk)
-    except Asset.DoesNotExist:
-        raise Http404(f'Asset with pk {pk} doesn\'t exist!')
-    asset.delete()
-    return redirect('asset_list')
+        appointment = Appointment.objects.get(pk=pk)
+    except Appointment.DoesNotExist:
+        raise Http404(f'Appointment with pk {pk} doesn\'t exist!')
+    appointment.delete()
+    return redirect('appointment_list')
 
 
 @login_required(login_url='login')
-def assets_new(request):
-    new_form = AssetForm(initial={'owner': request.user, 'latitude': 0.0, 'longitude': 0.0})
+def appointment_new(request):
+    # fill default values
+    today = datetime.datetime.today().strftime('%Y-%m-%dT%H:%M')
+    new_form = AppointmentForm(initial={'datetime': today, 'client': request.user, 'latitude': 0.0, 'longitude': 0.0})
+    
+    # if user is not admin, then he/she only can assign an appointment for him/her
     if not request.user.is_superuser:
-        new_form.fields['owner'].widget.attrs['disabled'] = True
+        new_form.fields['client'].widget.attrs['disabled'] = True
+    
+    # if HTTP request is POST
     if request.method == "POST":
-        filled_form = AssetForm(request.POST)
+        filled_form = AppointmentForm(request.POST)
         if not request.user.is_superuser:
             filled_form.data._mutable = True
-            filled_form.data['owner'] = request.user
+            filled_form.data['client'] = request.user
             filled_form.data._mutable = False
-        new_asset = filled_form.save()
-        new_pk = new_asset.pk
-        note = f"Asset object with pk: {new_pk} was successfully created."
-    else:
-        note = "Please proceed to add a new asset."
 
-    context = {"note": note, "assetform": new_form}
-    return render(request, "assets_new.html", context)
+        # sanitize datetime for work hours
+        error = 0
+        date = datetime.datetime.strptime(filled_form.data['datetime'], '%Y-%m-%dT%H:%M')
+        date = date.replace(second=0, microsecond=0)
+
+        if (date.minute >= 30):
+            date = date.replace(minute=30)
+        else:
+            date = date.replace(minute=0)
+
+        if (date.weekday() >= 5):
+            error = 1
+            messages.warning(request, f"Day: {date.weekday() + 1}")
+            messages.warning(request, "Invalid day provided, make sure it is a working day. Mon-Fri")
+
+        if (date.hour < 8 or date.hour > 16):
+            error = 1
+            messages.warning(request, f"Hour: {date.hour}")
+            messages.warning(request, "Invalid hour provided, make sure it is a valid working hour. From 8:00 to 15:59")
+
+        # continue if valid
+        if (error == 0):
+            filled_form.data._mutable = True
+            filled_form.data['datetime'] = date
+            filled_form.data._mutable = False
+
+            #add time conflic logic
+
+            new_appointment = filled_form.save()
+            messages.success(request, f"Appointment for client {new_appointment.client} at {new_appointment.datetime} was successfully created.")
+
+    context = {"appointmentform": new_form}
+    return render(request, "appointment_new.html", context)

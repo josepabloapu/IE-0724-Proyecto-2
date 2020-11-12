@@ -16,7 +16,16 @@
   </head>
   <body>
     {% include 'navbar.html' %}
-    <br />
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-info alert-dismissable">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+          {{msg.tags}}: {{msg.message}}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <br/>
     <div class="container-fluid">{% block content %} {% endblock %}</div>
   </body>
 
