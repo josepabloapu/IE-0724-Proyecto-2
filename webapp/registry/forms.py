@@ -17,6 +17,14 @@ class AppointmentForm(forms.ModelForm):
         model = Appointment
         fields = [
             'datetime',
+            'hour_of_day',
+            'day_of_week',
+            'day_of_month',
+            'day_of_year',
+            'week_of_month',
+            'week_of_year',
+            'month',
+            'year',
             'provider',
             'client',
             'province',
@@ -26,12 +34,36 @@ class AppointmentForm(forms.ModelForm):
         ]
         labels = {
             'datetime': 'Datetime',
+            'hour_of_day': 'Hour',
+            'day_of_week': 'Day of the week',
+            'day_of_month': 'Day of the month',
+            'day_of_year': 'Day of the year',
+            'week_of_month': 'Week of the month',
+            'week_of_year': 'Week of the year',
+            'month': 'Month',
+            'year': 'Year',
             'provider': 'Provider',
             'client': 'Client',
             'province': 'Province',
             'latitude': 'Latitude',
             'longitude': 'Longitude',
         }
+        required = (
+            'datetime',
+            'provider',
+            'client',
+            'province',
+            'latitude',
+            'longitude',
+        )
         widgets = {
             'datetime': DateTimeInput(),
+            'hour_of_day': forms.HiddenInput(),
+            'day_of_week': forms.HiddenInput(),
+            'day_of_month': forms.HiddenInput(),
+            'day_of_year': forms.HiddenInput(),
+            'week_of_month': forms.HiddenInput(),
+            'week_of_year': forms.HiddenInput(),
+            'month': forms.HiddenInput(),
+            'year': forms.HiddenInput(),
         }

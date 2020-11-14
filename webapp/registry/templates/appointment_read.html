@@ -1,22 +1,32 @@
 {% extends 'layout.html' %} {% block content %}
 
 <div class="container">
-  <h1>
-    Detalles de propiedad
-    <a class="btn btn-primary" href="{% url 'appointment_edit' appointment.pk %}">Editar</a>
-  </h1>
-  <a><b>Identificador: </b> {{appointment.pk}} </a><br />
+  <div class="row">
+    <div class="col-md-8">
+      <h1>
+        Detalles de propiedad
+      </h1>
+    </div>
+    <div class="col-md-4">
+      <a class="btn btn-primary col-md-12" href="{% url 'appointment_edit' appointment.pk %}">Edit</a>
+    </div>
+  </div>
+  
+  <a><b>Id: </b> {{appointment.pk}} </a><br />
   <a><b>Datetime: </b> {{appointment.datetime}} </a><br />
-  <a><b>Provedor: </b> {{appointment.provider}} </a><br />
-  <a><b>Propietario: </b> {{appointment.client}} </a><br />
+  <a><b>Provider: </b> {{appointment.provider}} </a><br />
+  <a><b>Client: </b> {{appointment.client.first_name}} {{appointment.client.last_name}} </a><br />
 
-  <a><b>Provincia: </b> {{appointment.province}} </a><br />
-  <a><b>Latitud: </b> {{appointment.latitude}} </a><br />
-  <a><b>Longitud: </b> {{appointment.longitude}} </a><br />
+  <hr />
+  <p><b>Location:</b></p>
+  <a><b>Provincia</b> {{appointment.province}} </a><br />
+  <a><b>Latitud</b> {{appointment.latitude}} </a><br />
+  <a><b>Longitud</b> {{appointment.longitude}} </a><br />
+  <a href="https://www.google.com/maps/search/?api=1&query={{appointment.latitude}},{{appointment.longitude}}">Google Maps</a><br/>
   
   <hr />
-  <a><b>Fecha de ingreso: </b> {{appointment.createdAt}} </a><br />
-  <a><b>Fecha de actualización: </b> {{appointment.updatedAt}} </a><br />
+  <a><b>Creation date: </b> {{appointment.createdAt}} </a><br />
+  <a><b>Modified Date: </b> {{appointment.updatedAt}} </a><br />
 </div>
 
 {% endblock %}

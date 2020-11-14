@@ -88,6 +88,15 @@
           <div class="d-flex justify-content-center">
             <h3 id="form-title">LOGIN</h3>
           </div>
+
+          {% if messages %}
+            {% for msg in messages %}
+              <div class="alert alert-{{msg.tags}} alert-dismissable">
+                {{msg.message}}
+              </div>
+            {% endfor %}
+          {% endif %}
+
           <div class="d-flex justify-content-center form_container">
             <form method="POST" action="">
               {% csrf_token %}
@@ -112,10 +121,6 @@
               </div>
             </form>
           </div>
-
-          {% for message in messages %}
-          <p id="messages">{{message}}</p>
-          {% endfor %}
 
           <div class="mt-4">
             <div class="d-flex justify-content-center links">

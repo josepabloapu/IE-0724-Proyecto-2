@@ -1,10 +1,13 @@
 {% extends 'layout.html' %} {% block content %} {% load widget_tweaks %}
 <div class="container">
   <form action="{% url 'appointment_edit' appointment.pk %}" method="POST">
-    {% csrf_token %} {% for field in appointmentform %}
-    <div class="form-group">{{field.label_tag}} {% render_field field class="form-control" %}</div>
-    {% endfor %}
-    <input class="btn btn-primary" type="submit" value="Actualizar propiedad" />
+    <div class="row">
+      {% csrf_token %} {% for field in appointmentform.visible_fields %}
+      <div class="form-group col-md-4">{{field.label_tag}} {% render_field field class="form-control" %}</div>
+      {% endfor %}
+      <div class="form-group col-md-4"></div>
+      <input class="btn btn-primary col-md-4" type="submit" value="Update Appointment" />
+    </div>
   </form>
 </div>
 {% endblock %}

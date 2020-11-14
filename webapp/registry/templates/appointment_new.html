@@ -1,10 +1,53 @@
 {% extends 'layout.html' %} {% block content %} {% load widget_tweaks %}
 <div class="container">
+
+  <h1>Available dates</h1>
+  <p>Please select any avaialble date</p>
+  <table class="table table-striped table-bordered table-sm">
+    <thead>
+      <tr>
+        <th>Provider</th>
+        {% if days %}
+          {% for day in days %}
+            <th>{{day}}</th>
+          {% endfor %}
+        {% endif %}
+      </tr>
+    </thead>
+    <tbody>
+      {% if appointment_status %}
+        {% for i, office in appointment_status.items %}
+          <tr>
+            {% if office %}
+              <td style="text-align:center;padding: 30px 0;">{{i}}</td>
+              {% for j, day in office.items %}
+                <td>
+                {% if day %}
+                  {% for k, selection in day.items %}
+                    {% if selection.available %}
+                      <a class="btn btn-primary btn-block" href="{% url 'appointment_new' %}?datetime={{selection.date | urlencode}}&provider={{selection.provider | urlencode}}">{{selection.date|slice:"-5:"}}</a>
+                    {% else %}
+                      <a class="btn btn-secondary btn-block disabled">{{selection.date|slice:"-5:"}}</a>
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+                </td>
+              {% endfor %}
+            {% endif %}
+          </tr>
+        {% endfor %}
+      {% endif %}
+    </tbody>
+  </table>
+
   <form action="{% url 'appointment_new' %}" method="POST">
-    {% csrf_token %} {% for field in appointmentform %}
-    <div class="form-group">{{field.label_tag}} {% render_field field class="form-control" %}</div>
-    {% endfor %}
-    <input class="btn btn-primary" type="submit" value="Add" />
+    <div class="row">
+      {% csrf_token %} {% for field in appointmentform.visible_fields %}
+      <div class="form-group col-md-4">{{field.label_tag}} {% render_field field class="form-control" %}</div>
+      {% endfor %}
+      <div class="form-group col-md-4"></div>
+      <input class="btn btn-primary col-md-4" type="submit" value="Add" />
+    </div>
   </form>
 </div>
 {% endblock %}
