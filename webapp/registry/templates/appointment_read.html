@@ -11,11 +11,12 @@
       <a class="btn btn-primary col-md-12" href="{% url 'appointment_edit' appointment.pk %}">Edit</a>
     </div>
   </div>
-  
+
   <a><b>Id: </b> {{appointment.pk}} </a><br />
   <a><b>Datetime: </b> {{appointment.datetime}} </a><br />
   <a><b>Provider: </b> {{appointment.provider}} </a><br />
   <a><b>Client: </b> {{appointment.client.first_name}} {{appointment.client.last_name}} </a><br />
+  <a><b>Alias: </b> {{appointment.alias}} </a><br />
 
   <hr />
   <p><b>Location:</b></p>
@@ -23,7 +24,7 @@
   <a><b>Latitud</b> {{appointment.latitude}} </a><br />
   <a><b>Longitud</b> {{appointment.longitude}} </a><br />
   <a href="https://www.google.com/maps/search/?api=1&query={{appointment.latitude}},{{appointment.longitude}}">Google Maps</a><br/>
-  
+
   <hr />
   <a><b>Creation date: </b> {{appointment.createdAt}} </a><br />
   <a><b>Modified Date: </b> {{appointment.updatedAt}} </a><br />
