@@ -13,6 +13,9 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class AppointmentForm(forms.ModelForm):
+
+    alias = forms.CharField(required=False)
+
     class Meta:
         model = Appointment
         fields = [
@@ -30,7 +33,8 @@ class AppointmentForm(forms.ModelForm):
             'province',
             'latitude',
             'longitude',
-            
+            'alias',
+
         ]
         labels = {
             'datetime': 'Datetime',
@@ -47,6 +51,7 @@ class AppointmentForm(forms.ModelForm):
             'province': 'Province',
             'latitude': 'Latitude',
             'longitude': 'Longitude',
+            'alias': 'Alias',
         }
         required = (
             'datetime',

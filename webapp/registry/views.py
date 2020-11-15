@@ -97,6 +97,7 @@ def appointment_list(request):
             if (item.client == request.user or request.user.is_superuser):
                 appointment_dict[item.pk] = {
                     'pk': item.pk,
+                    'alias': item.alias,
                     'datetime': item.datetime,
                     'provider': item.provider,
                     'client': item.client,
@@ -177,7 +178,8 @@ def appointment_edit(request, pk=None):
                                                  'client': appointment.client,
                                                  'province': appointment.province,
                                                  'latitude': appointment.latitude,
-                                                 'longitude': appointment.longitude})
+                                                 'longitude': appointment.longitude,
+                                                 'alias': appointment.alias})
 
             # disable editing client for non admin users
             if not request.user.is_superuser:
@@ -345,7 +347,12 @@ def appointment_new(request):
     query_provider = request.GET.get('provider', None)
 
     # init the form
-    new_form = AppointmentForm(initial={'datetime': query_datetime, 'provider': query_provider, 'client': request.user, 'latitude': 0.0, 'province': 'SJ', 'longitude': 0.0})
+    new_form = AppointmentForm(initial={'datetime': query_datetime,
+                                        'provider': query_provider,
+                                        'client': request.user,
+                                        'latitude': 0.0,
+                                        'province': 'SJ',
+                                        'longitude': 0.0})
 
     # if user is not admin, then he/she only can assign an appointment for him/her
     if not request.user.is_superuser:

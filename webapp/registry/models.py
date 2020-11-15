@@ -48,6 +48,8 @@ class Appointment(models.Model):
 
     provider = models.CharField(max_length=3, choices=APPOINTMENT_PROVIDERS)
     client = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    alias = models.CharField(max_length=50, default="")
     province = models.CharField(max_length=2, choices=APPOINTMENT_PROVINCES)
     latitude = models.DecimalField(max_digits=8, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)

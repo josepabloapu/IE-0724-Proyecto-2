@@ -10,6 +10,7 @@
         <th>Datetime</th>
         <th>Provider</th>
         <th>Client</th>
+        <th>Alias</th>
         <th>Details</th>
         <th>Delete</th>
       </tr>
@@ -21,6 +22,7 @@
         <td>{{value.datetime}}</td>
         <td>{{value.provider}}</td>
         <td>{{value.client}}</td>
+        <td>{{value.alias}}</td>
         <td><a href="{% url 'appointment_read' value.pk %}">Details</a></td>
         <td><a href="{% url 'appointment_delete' value.pk %}">Delete</a></td>
       </tr>

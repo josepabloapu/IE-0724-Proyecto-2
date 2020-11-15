@@ -42,11 +42,15 @@
 
   <form action="{% url 'appointment_new' %}" method="POST">
     <div class="row">
-      {% csrf_token %} {% for field in appointmentform.visible_fields %}
-      <div class="form-group col-md-4">{{field.label_tag}} {% render_field field class="form-control" %}</div>
-      {% endfor %}
-      <div class="form-group col-md-4"></div>
-      <input class="btn btn-primary col-md-4" type="submit" value="Add" />
+        {% csrf_token %} {% for field in appointmentform.visible_fields %}
+        <div class="form-group col-md-4">{{field.label_tag}} {% render_field field class="form-control" %}</div>
+        {% endfor %}
+    </div>
+    <br />
+    <div class="row">
+        <div class="form-group col-md-12">
+            <input class="btn btn-primary col-md-12" type="submit" value="Add" />
+        </div>
     </div>
   </form>
 </div>

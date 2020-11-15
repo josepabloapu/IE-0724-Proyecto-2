@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .models import Asset
+from .models import Appointment
+from datetime import datetime
 
 # Create your tests here.
-class AssetTestCase(TestCase):
+class AppointmentTestCase(TestCase):
     def setUp(self):
         self.credentials = {
             'username': 'testuser',
@@ -33,28 +34,23 @@ class AssetTestCase(TestCase):
         response = self.client.get(reverse('login', args=[]))
         self.assertEqual(response.status_code, 302)
 
-    def test_assets_new_url(self):
+    def test_appointments_new_url(self):
         # no login
-        response = self.client.get(reverse('asset_new', args=[]))
+        response = self.client.get(reverse('appointment_new', args=[]))
         self.assertEqual(response.status_code, 302)
         # logged in
         response = self.client.post(reverse('login'), self.credentials, follow=True)
-        response = self.client.get(reverse('asset_new', args=[]))
+        response = self.client.get(reverse('appointment_new', args=[]))
         self.assertEqual(response.status_code, 200)
-        # add asset
+        # add appointment
         myuser = User.objects.get(pk=1)
-        data = {"alias": "alias1", "province": "province1", "category": "I", "latitude": 0.0, "longitude": 0.0, "owner": myuser}
-        response = self.client.post(reverse('asset_new'), data, follow=True)
+        today = datetime.today().strftime('%Y-%m-%dT%H:%M')
+        data = {"datetime": today,
+                "province": "SJ",
+                "provider": "O1",
+                "latitude": 0.0,
+                "longitude": 0.0,
+                "alias": "Appointment Test",
+                "owner": myuser}
+        response = self.client.post(reverse('appointment_new'), data, follow=True)
         self.assertEqual(response.status_code, 200)
-
-    def test_assets_read_url(self):
-        response = self.client.post(reverse('login'), self.credentials, follow=True)
-        myuser = User.objects.get(pk=1)
-        data = {"alias": "alias1", "province": "province1", "category": "I", "latitude": 0.0, "longitude": 0.0, "owner": myuser}
-        response = self.client.post(reverse('asset_new'), data, follow=True)
-        # valid pk
-        response = self.client.get(reverse('asset_read', args=(1,)), data, follow=True)
-        self.assertEqual(response.status_code, 200)
-        # invalid pk
-        response = self.client.get(reverse('asset_read', args=(2,)), data, follow=True)
-        self.assertEqual(response.status_code, 404)
