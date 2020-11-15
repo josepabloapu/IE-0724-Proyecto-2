@@ -20,6 +20,10 @@ ENV TZ=America/Costa_Rica
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime \
 	&& echo $TZ > /etc/timezone
 
+# Add scripts folder
+ENV PATH="/webapp:${PATH}"
+RUN chmod +x entrypoint.sh
+
 # Add python requirements
 RUN pip install -r requirements.txt
 
@@ -35,3 +39,5 @@ RUN chmod -R 755 /vol/web
 # Switch users
 USER user
 
+# Run server
+CMD ["entrypoint.sh"]
