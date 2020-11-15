@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  webapp:
+    build:
+      context: ./webapp
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./webapp:/webapp
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=samplesecretkey123
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@registry.com
+      - DJANGO_SUPERUSER_PASSWORD=password
