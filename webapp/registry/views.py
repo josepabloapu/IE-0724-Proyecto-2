@@ -86,9 +86,9 @@ def appointment_list(request):
 
     GET:
         Display all appointments. If an admin user is logged in,
-        then results are not filtered by user. Differently,
+        then results are not filtered by the user. Differently,
         if it is a normal user who is logged in,
-        then he/she only can view his/her shceduled appointments.
+        then he/she only can view his/her scheduled appointments.
     '''
     appointment_dict = {}
     now = datetime.now()
@@ -114,7 +114,7 @@ def appointment_read(request, pk=None):
     Appointment List View.
 
     GET:
-        Display an appointment. If user have enough privileges
+        Display an appointment. If the user has enough privileges
         then he/she is able to see all the details.
     '''
     context = {}
@@ -137,7 +137,7 @@ def appointment_delete(request, pk=None):
     Appointment List View.
 
     GET:
-        Remove an appointment. If user have enough privileges
+        Remove an appointment. If the user has enough privileges
         then he/she is able to remove it.
     '''
     try:
@@ -146,7 +146,7 @@ def appointment_delete(request, pk=None):
         raise Http404(f'Appointment with pk {pk} doesn\'t exist!')
     if (request.user.is_superuser or request.user == appointment.client):
         appointment.delete()
-        messages.info(request, f'Record has been removes successfully.')
+        messages.info(request, f'Record has been removed successfully.')
         return redirect('appointment_list')
     else:
         messages.warning(request, f'User does not have permission to remove this record.')
@@ -229,8 +229,8 @@ def appointment_new(request):
 
     GET:
         Displays a form to create an appointment. Before rendering the view
-        the app computes which is the next day with appointments avaialble and
-        which are the avaialble spaces in the uncoming days. (Default is set to the uncoming 10 days)
+        the app computes which is the next day with appointments available and
+        which are the available spaces in the upcoming days. (Default is set to the upcoming 10 days)
     POST:
         Save appointment with the data provided
     '''
@@ -238,7 +238,7 @@ def appointment_new(request):
     def get_appointments_status_per_provider_per_date(provider, date):
         '''
         Aux function
-            From the provided data, it returns the availability status of the appointement within a single day.
+            From the provided data, it returns the availability status of the appointment within a single day.
 
             @param [in] provider    select the provider from APPOINTMENT_PROVIDERS
             @param [in] date        select the datetime
@@ -258,7 +258,7 @@ def appointment_new(request):
     def get_next_appointments_status_per_provider(provider, date, days_limit=9):
         '''
         Aux function
-            From the provided data, it returns the availability status of the appointement within a group of days.
+            From the provided data, it returns the availability status of the appointment within a group of days.
             This group starts from a certain day (D) until (D+days_limit)
 
             @param [in] provider    select the provider from APPOINTMENT_PROVIDERS
@@ -281,8 +281,8 @@ def appointment_new(request):
     def get_appointments_status_per_date(date):
         '''
         Aux function
-            From the provided data, it returns the availability status of the appointement within a group of days and
-            all avaialble providers.
+            From the provided data, it returns the availability status of the appointment within a group of days and
+            all available providers.
 
             @param [in] date        select the datetime
 
@@ -296,11 +296,11 @@ def appointment_new(request):
     def get_next_appointment_available_date(date):
         '''
         Aux function
-            Get the next availalbe to day to schedule an appointment
+            Get the next availalbe day to schedule an appointment
 
             @param [in] date        select the datetime
 
-            @return date            datetime instance of the next avaialble day
+            @return date            datetime instance of the next available day
         '''
         ref_date = date - timedelta(days=1)
         available_date_search = True
@@ -315,12 +315,12 @@ def appointment_new(request):
     def check_appointment_availability(provider, datetime):
         '''
         Aux function
-            Check if a day in avaialble with the selected provider
+            Check if a day in available with the selected provider
 
             @param [in] provider    select the provider from APPOINTMENT_PROVIDERS
             @param [in] datetime    select the datetime
 
-            @return bool            return wether the day is avaialble or not
+            @return bool            return whether the day is available or not
         '''
         appointment = Appointment.objects.filter(provider=provider, year=datetime.year, month=datetime.month, day_of_month=datetime.day, hour_of_day=datetime.hour)
         if len(appointment) == 0:
@@ -328,12 +328,12 @@ def appointment_new(request):
         else:
             return False
 
-    # generate the avaialbility matrix (day-provider)
+    # generate the availability matrix (day-provider)
     today = datetime.today()
     next_day = get_next_appointment_available_date(date=today)
     appointment_status = get_appointments_status_per_date(date=next_day)
 
-    # compute the columns of the avaialble dates table
+    # compute the columns of the available dates table
     days = []
     for office in appointment_status:
         for day in appointment_status[office]:
@@ -372,7 +372,7 @@ def appointment_new(request):
             error = 1
             messages.warning(request, f"Invalid day provided ({date.strftime('%a')}), make sure it is a working day.")
 
-        # check if the hour match with the avaialble APPOINTMENT_HOURS
+        # check if the hour match with the available APPOINTMENT_HOURS
         hour = []
         for hour_tuple in APPOINTMENT_HOURS:
             hour.append(hour_tuple[0])
