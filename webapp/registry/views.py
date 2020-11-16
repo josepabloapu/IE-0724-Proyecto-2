@@ -3,6 +3,7 @@ from django.http import HttpResponse, Http404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db.models import Q
 import datetime
 from .models import Appointment
 from .forms import AppointmentForm, CustomUserCreationForm
@@ -60,6 +61,7 @@ def appointment_list(request):
     for item in Appointment.objects.all():
         if abs(now.year-item.datetime.year) <= 1:
             if (item.client == request.user or request.user.is_superuser):
+
                 appointment_dict[item.pk] = {
                     'pk': item.pk,
                     'datetime': item.datetime,
@@ -69,12 +71,26 @@ def appointment_list(request):
                     'latitude': item.latitude,
                     'longitude': item.longitude,
                 }
-    context = {'appointment_dict': appointment_dict, }
+
+
+    busqueda = request.GET.get("buscar", "")
+    print(busqueda)
+    propiedades = Appointment.objects.all()
+    if busqueda:
+        propiedades = Appointment.objects.filter(
+            Q(datetime__icontains=busqueda) |
+            Q(provider__icontains=busqueda) |
+            Q(client__icontains=busqueda)
+        )
+    context = {'appointment_dict': appointment_dict, 'propiedades': propiedades}
     return render(request, 'appointment_list.html', context)
 
 
 @login_required(login_url='login')
 def appointment_read(request, pk=None):
+
+
+
     if pk is not None:
         try:
             appointment = Appointment.objects.get(pk=pk)
@@ -86,6 +102,14 @@ def appointment_read(request, pk=None):
         context = {}
         return render(request, 'appointment_read.html', context)
 
+
+
+
+
+
+
+
+
 @login_required(login_url='login')
 def appointment_edit(request, pk=None):
     if pk is not None:
@@ -94,12 +118,12 @@ def appointment_edit(request, pk=None):
         except Appointment.DoesNotExist:
             raise Http404(f'Appointment with pk {pk} doesn\'t exist!')
         if (appointment.client == request.user or request.user.is_superuser):
-    
-            edit_form = AppointmentForm(initial={'datetime': appointment.datetime.strftime('%Y-%m-%dT%H:%M'), 
-                                                'provider': appointment.provider, 
-                                                'client': appointment.client, 
+
+            edit_form = AppointmentForm(initial={'datetime': appointment.datetime.strftime('%Y-%m-%dT%H:%M'),
+                                                'provider': appointment.provider,
+                                                'client': appointment.client,
                                                 'province': appointment.province,
-                                                'latitude': appointment.latitude, 
+                                                'latitude': appointment.latitude,
                                                 'longitude': appointment.longitude})
             if not request.user.is_superuser:
                 edit_form.fields['client'].widget.attrs['disabled'] = True
@@ -141,11 +165,11 @@ def appointment_new(request):
     # fill default values
     today = datetime.datetime.today().strftime('%Y-%m-%dT%H:%M')
     new_form = AppointmentForm(initial={'datetime': today, 'client': request.user, 'latitude': 0.0, 'longitude': 0.0})
-    
+
     # if user is not admin, then he/she only can assign an appointment for him/her
     if not request.user.is_superuser:
         new_form.fields['client'].widget.attrs['disabled'] = True
-    
+
     # if HTTP request is POST
     if request.method == "POST":
         filled_form = AppointmentForm(request.POST)

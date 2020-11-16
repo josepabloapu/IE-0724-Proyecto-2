@@ -24,7 +24,7 @@ APPOINTMENT_PROVINCES = [
 
 
 class Appointment(models.Model):
-    datetime = models.DateTimeField(default=datetime(1990,1,1))
+    datetime = models.DateTimeField(default=datetime(1990, 1, 1))
     provider = models.CharField(max_length=3, choices=APPOINTMENT_PROVIDERS)
     client = models.ForeignKey(User, on_delete=models.CASCADE)
     province = models.CharField(max_length=2, choices=APPOINTMENT_PROVINCES)

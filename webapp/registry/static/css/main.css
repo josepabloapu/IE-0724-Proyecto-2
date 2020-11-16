@@ -43,28 +43,14 @@ header,footer{
     padding: 2px;
     text-align: center;
 }
-.separador1{
-    height: 10px;
-    clear: both;
-}
-.separador2{
-    width: 2%;
-    height: 1px;
-    float: left;
-}
-.centro{
-    width: 60%;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-}
+
 .main{
     height: 400px;
 }
 img{
     transition: all 0.5s ease;
     border-style: solid;
-    border-color: #2b4186;
+    border-color: #0c1d2f;
 }
 img:hover{
     transform: scale(0.9);
